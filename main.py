@@ -6,13 +6,17 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
 
 
-train_datagen = ImageDataGenerator(rescale=1./255)
+train_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.05)
 train_generator = train_datagen.flow_from_directory(
-        'NULL',
-        target_size=(150, 150),
-        batch_size=32,
-        class_mode='sparse',  # Utilisez 'sparse' pour des étiquettes numériques
-        shuffle=True)
+    'NULL',
+    target_size=(150, 150),
+    batch_size=64,
+    class_mode='sparse',  # Utilisez 'sparse' pour des étiquettes numériques
+    shuffle=True,
+    subset='training',  # Utiliser uniquement un sous-ensemble des données d'entraînement
+        # Spécifiez la fraction de données à utiliser pour l'entraînement
+)
+
 
 
 def process_video(video_path):
@@ -25,15 +29,33 @@ def process_video(video_path):
         frame.save_frame(f"frame_{t}.png")
 
 
-#model qui predit l'age de quelqun a partir de la photo
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150,)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
+
+#model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+#model.add(layers.MaxPooling2D((2, 2)))
+
+model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+
+model.add(layers.Conv2D(128, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+
+model.add(layers.Conv2D(128, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+
 model.add(layers.Flatten())
-model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(128, activation='relu'))
 model.add(layers.Dense(1))
 
+
+
+model.compile(optimizer="adam", loss="mse", metrics=["mae", "accuracy"])
+
 model.fit(train_generator, epochs=10)
+
+
 
 img_path = 'gaby.jpg'
 img = image.load_img(img_path, target_size=(150, 150))
