@@ -2,6 +2,14 @@
 from tensorflow.keras import layers, models
 import moviepy.editor as mp
 
+train_datagen = ImageDataGenerator(rescale=1./255)
+train_generator = train_datagen.flow_from_directory(
+        'chemin_vers_dossier_des_images',
+        target_size=(150, 150),
+        batch_size=32,
+        class_mode='binary')
+
+
 def process_video(video_path):
     video = mp.VideoFileClip(video_path)
     duration = int(video.duration)
@@ -19,3 +27,4 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(1))
+
