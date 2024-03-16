@@ -1,4 +1,4 @@
-#import tensorflow as tf
+import tensorflow as tf
 from tensorflow.keras import layers, models
 import moviepy.editor as mp
 import numpy as np
@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
 
 
-train_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.05)
+train_datagen = ImageDataGenerator(rescale=1./255)
 train_generator = train_datagen.flow_from_directory(
     'NULL',
     target_size=(150, 150),
@@ -30,7 +30,8 @@ def process_video(video_path):
 
 
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+first_layers = 32
+model.add(layers.Conv2D(first_layers, (3, 3), activation='relu', input_shape=(150, 150, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 
 #model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(150, 150, 3)))
@@ -42,14 +43,14 @@ model.add(layers.MaxPooling2D((2, 2)))
 
 
 model.add(layers.Flatten())
-model.add(layers.Dense(128, activation='relu'))
+model.add(layers.Dense(256, activation='relu'))
 model.add(layers.Dense(1))
 
 
 
-model.compile(optimizer="adam", loss="mse", metrics=["mae", "accuracy"])
+model.compile(optimizer=tf.keras.optimizers.Nadam(learning_rate=0.00046), loss="mse", metrics=["mae", "accuracy"])
 
-model.fit(train_generator, epochs=10, batch_size=256)
+model.fit(train_generator, epochs=10, batch_size=16)
 
 
 
