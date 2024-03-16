@@ -23,5 +23,5 @@ def limiter_elements_sous_dossiers(dossier_racine, X):
 
 # Exemple d'utilisation
 dossier_racine = "NULL"
-x = 60
+x = 40
 limiter_elements_sous_dossiers(dossier_racine, x)
