@@ -1,6 +1,8 @@
 #import tensorflow as tf
 from tensorflow.keras import layers, models
 import moviepy.editor as mp
+from tensorflow.keras.preprocessing import image
+
 
 train_datagen = ImageDataGenerator(rescale=1./255)
 train_generator = train_datagen.flow_from_directory(
@@ -31,3 +33,9 @@ model.add(layers.Dense(1))
 
 model.fit(train_generator, epochs=10)
 
+img_path = 'gaby.jpg'
+img = image.load_img(img_path, target_size=(150, 150))
+img_array = image.img_to_array(img)
+img_array = np.expand_dims(img_array, axis=0)
+
+print(model.predict(img_array))
