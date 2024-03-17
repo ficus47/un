@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing import image
 
 train_datagen = ImageDataGenerator(rescale=1./255)
 train_generator = train_datagen.flow_from_directory(
-    'NULL',
+    'something',
     target_size=(150, 150),
     batch_size=128,
     class_mode='categorical',  # Utilisez 'sparse' pour des étiquettes numériques
@@ -37,18 +37,18 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(128, (3, 3), activation='sigmoid', input_shape=(150, 150, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 
-model.add(layers.Conv2D(256, (3, 3), activation='sigmoid', input_shape=(150, 150, 3)))
+model.add(layers.Conv2D(128, (3, 3), activation='sigmoid', input_shape=(150, 150, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 
 
 
 model.add(layers.Flatten())
-model.add(layers.Dense(1024, activation='relu'))
-model.add(layers.Dense(99, activation="softmax"))
+model.add(layers.Dense(512, activation='sigmoid'))
+model.add(layers.Dense(2, activation="softmax"))
 
 
 
-model.compile(optimizer=tf.keras.optimizers.Nadam(learning_rate=45e-4), loss="categorical_crossentropy", metrics=["accuracy"])
+model.compile(optimizer=tf.keras.optimizers.Adam(), loss="categorical_crossentropy", metrics=["accuracy"])
 
 model.fit(train_generator, epochs=5, batch_size=128)
 
@@ -59,4 +59,6 @@ img = image.load_img(img_path, target_size=(150, 150))
 img_array = image.img_to_array(img)
 img_array = np.expand_dims(img_array, axis=0)
 
-print([i for i in range(1, 99)][model.predict(img_array).argmax[0]])
+x = ["old", "young"]
+
+print(x[model.predict(img_array).argmax()[0]])
