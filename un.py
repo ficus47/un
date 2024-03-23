@@ -24,4 +24,46 @@ def limiter_elements_sous_dossiers(dossier_racine, X):
 # Exemple d'utilisation
 dossier_racine = "NULL"
 x = 40
-limiter_elements_sous_dossiers(dossier_racine, x)
+#limiter_elements_sous_dossiers(dossier_racine, x)
+
+
+import hashlib
+import os
+
+def supprimer_photos_identiques(dossier):
+  """
+  Supprime toutes les photos identiques dans un dossier donné.
+
+  Args:
+      dossier (str): Le chemin du dossier à analyser.
+  """
+  fichiers = os.listdir(dossier)
+  fichiers_a_supprimer = []
+
+  # Dictionnaire pour stocker les empreintes digitales et les fichiers correspondants
+  empreintes_digitales = {}
+
+  for fichier in fichiers:
+    chemin_fichier = os.path.join(dossier, fichier)
+
+    if not os.path.isfile(chemin_fichier):
+      continue
+
+    # Calculer l'empreinte digitale du fichier
+    with open(chemin_fichier, 'rb') as f:
+      empreinte_digitale = hashlib.md5(f.read()).hexdigest()
+
+    if empreinte_digitale in empreintes_digitales:
+      # Si l'empreinte digitale existe déjà, le fichier est un doublon
+      fichiers_a_supprimer.append(chemin_fichier)
+    else:
+      # Ajouter l'empreinte digitale et le fichier au dictionnaire
+      empreintes_digitales[empreinte_digitale] = chemin_fichier
+
+  # Supprimer les fichiers doublons
+  for fichier_a_supprimer in fichiers_a_supprimer:
+    os.remove(fichier_a_supprimer)
+
+if __name__ == "__main__":
+  dossier = "young"  # Remplacez par le chemin réel de votre dossier
+  supprimer_photos_identiques(dossier)
